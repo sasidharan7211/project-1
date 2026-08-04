@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Friends Survey</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+-webkit-tap-highlight-color:transparent;
+}
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:16px;
+overflow:auto;
+background:linear-gradient(135deg,#0f172a,#1e1b4b,#312e81,#581c87);
+}
+.container{
+width:100%;
+max-width:500px;
+padding:22px;
+border-radius:24px;
+background:rgba(255,255,255,.09);
+border:1px solid rgba(255,255,255,.12);
+backdrop-filter:blur(18px);
+box-shadow:0 15px 40px rgba(0,0,0,.35);
+position:relative;
+overflow:hidden;
+}
+.container::before,
+.container::after{
+content:"";
+position:absolute;
+border-radius:50%;
+background:rgba(255,255,255,.05);
+}
+.container::before{
+width:220px;
+height:220px;
+top:-100px;
+right:-100px;
+}
+.container::after{
+width:180px;
+height:180px;
+bottom:-90px;
+left:-90px;
+}
+h2{
+color:white;
+text-align:center;
+margin-bottom:20px;
+}
+label{
+color:white;
+display:block;
+margin-top:15px;
+margin-bottom:8px;
+}
+input{
+width:100%;
+padding:14px;
+border:none;
+outline:none;
+border-radius:14px;
+background:rgba(255,255,255,.08);
+color:white;
+font-size:15px;
+}
+button{
+width:100%;
+margin-top:25px;
+padding:15px;
+border:none;
+border-radius:14px;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+color:white;
+background:linear-gradient(135deg,#8b5cf6,#6366f1);
+}
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+#status{
+margin-top:20px;
+text-align:center;
+color:white;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Friends Survey</h2>
+
+<form id="survey">
+
+<label>Name</label>
+<input type="text" id="name" required>
+
+<label>Date of Birth</label>
+<input type="date" id="dob" required>
+
+<label>Favourite Subject</label>
+<input type="text" id="fav" required>
+
+<label>Toughest Subject</label>
+<input type="text" id="tough" required>
+
+<button type="submit" id="submitBtn">Submit</button>
+
+</form>
+
+<div id="status"></div>
+
+</div>
+
+<script>
+const WEB_APP_URL ="https://script.google.com/macros/s/AKfycbxV1Hvo6fCAd1XrkLByixfS-CY2v4kolqNXxdQ3nEBSWCfFgUmRSBY-1ggzKdepeJEoSg/exec";
+
+const form = document.getElementById("survey");
+const submitBtn = document.getElementById("submitBtn");
+const status = document.getElementById("status");
+
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  submitBtn.disabled = true;
+  submitBtn.innerText = "Submitting...";
+  status.innerText = "";
+
+  const data = {
+    name: document.getElementById("name").value,
+    dob: document.getElementById("dob").value,
+    favourite: document.getElementById("fav").value,
+    toughest: document.getElementById("tough").value
+  };
+
+  // Using 'text/plain;charset=utf-8' prevents CORS preflight issues
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.text())
+  .then(result => {
+    console.log(result);
+
+    status.innerText = "✅ Submitted Successfully!";
+    submitBtn.innerText = "Submitted ✓";
+
+    form.reset();
+
+    setTimeout(function() {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Submit";
+      status.innerText = "";
+    }, 2000);
+  })
+  .catch(function(error) {
+    console.error(error);
+
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Submit";
+    status.innerText = "❌ Submission Failed";
+  });
+});
+</script>
+
+</body>
+</html>
